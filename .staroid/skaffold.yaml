@@ -1,0 +1,28 @@
+apiVersion: skaffold/v2beta1
+kind: Config
+build:
+  artifacts:
+    - image: ray-py3-7-7
+      context: .
+      custom:
+        buildCommand: .staroid/build.sh 3.7.7
+    - image: ray-py3-6-9
+      context: .
+      custom:
+        buildCommand: .staroid/build.sh 3.6.9
+    - image: ray-py-3-8-3
+      context: .
+      custom:
+        buildCommand: .staroid/build.sh 3.8.3
+deploy:
+  kubectl:
+    manifests:
+      - .staroid/k8s/ray.yaml
+      - .staroid/k8s/nfs.yaml
+  statusCheckDeadlineSeconds: 300    
+profiles:
+  - name: minikube
+    patches:
+      - op: add
+        path: /deploy/kubectl/manifests/0
+        value: .staroid/k8s/minikube.yaml
