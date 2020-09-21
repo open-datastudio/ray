@@ -33,8 +33,8 @@ if [ "$OP" == "patch" ]; then
         $SED_INPLACE "s|^WHEEL_URL=.*|WHEEL_URL=\"$WHEEL\"|g" $RAY_HOME/build-docker.sh
     fi
 
-    # patch GPU tag https://github.com/ray-project/ray/pull/10909
-    $SED_INPLACE "s/:latest/:latest\$GPU/g" $RAY_HOME/build-docker.sh
+    # build ray-ml
+    $SED_INPLACE "s/\"ray-deps\" \"ray\"/\"ray-deps\" \"ray\" \"ray-ml\"/g" $RAY_HOME/build-docker.sh
 
     # patch PATH
     $SED_INPLACE "s/\/root/\/home\/ray/g" ${RAY_HOME}/docker/base-deps/Dockerfile
@@ -55,6 +55,7 @@ if [ "$OP" == "patch" ]; then
     # patch rm
     $SED_INPLACE "s/ rm / sudo rm /g" ${RAY_HOME}/docker/ray-deps/Dockerfile
     $SED_INPLACE "s/ rm / sudo rm /g" ${RAY_HOME}/docker/ray/Dockerfile
+    $SED_INPLACE "s/ rm / sudo rm /g" ${RAY_HOME}/docker/ray-ml/Dockerfile
 
     # Add ray user & install sudo
     # lines until 'ARG DEBIAN_FRONTNED ...'
