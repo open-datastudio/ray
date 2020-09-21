@@ -12,7 +12,7 @@ SHORT_VER=`echo $PYTHON_VERSION | sed "s/\([0-9]*\)[.]\([0-9]*\)[.][0-9]*/\1\2/g
 
 # true to build .whl from source (will take about 3 hours).
 # false to use pre-built whl file from http(s) url.
-BUILD_WHEEL=${BUILD_WHEEL:-false}
+BUILD_WHEEL=${BUILD_WHEEL:-true}
 
 if [ "$BUILD_WHEEL" == "true" ]; then
     if [ ! -d ".whl" ]; then # check if already built.
@@ -54,15 +54,33 @@ fi
 # print patched files
 git diff
 
-cat docker/ray/Dockerfile
+cat docker/base-deps/Dockerfile
 cat docker/ray-deps/Dockerfile
+cat docker/ray/Dockerfile
+cat docker/ray-ml/Dockerfile
+
+# cp requirements to ray-ml dir
+cp python/requirements* docker/ray-ml
 
 # build docker image
 ./build-docker.sh --no-cache-build --gpu --python-version $PYTHON_VERSION
 
 # print images
-docker tag rayproject/ray:latest-gpu $IMAGE
+docker tag rayproject/ray-ml:latest-gpu $IMAGE
 docker images
+
+# verify image hash are all different.
+# In case of a parent image build fail,
+# 'FROM ...' command child image will pull from internet instead of using local build,
+# and child image bulid will success without error.
+# In this case, multiple image may end up with the same image hash.
+UNIQ_IMAGES=`docker images | grep ray-py | awk '{print $3}' | uniq | wc -l`
+NUM_IMAGES=`docker images | grep ray-py | awk '{print $3}' | wc -l`
+
+if [ "$NUM_IMAGES" != "$UNIQ_IMAGES" ]; then
+    echo "Error. Duplicated image hash found."
+    exit 1
+fi
 
 if $PUSH_IMAGE; then
     docker push $IMAGE

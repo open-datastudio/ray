@@ -10,7 +10,7 @@ build:
       context: .
       custom:
         buildCommand: .staroid/build.sh 3.6.9
-    - image: ray-py-3-8-3
+    - image: ray-py3-8-3
       context: .
       custom:
         buildCommand: .staroid/build.sh 3.8.3
