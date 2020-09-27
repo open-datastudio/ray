@@ -14,7 +14,8 @@ spec:
       - name: ray-py3-7-7
         image: ray-py3-7-7
         command: ["bash", "-c"]
-        args: |
+        args:
+        - |
           [ "$LAUNCH" == "true" ] &&
           git clone https://github.com/ray-project/ray.git &&
           cp ~/ray/python/ray/autoscaler/staroid/example-full.yaml ~/anaconda3/lib/python3.7/site-packages/ray/autoscaler/staroid/ &&
