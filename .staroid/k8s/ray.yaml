@@ -14,6 +14,18 @@ spec:
   selector:
     component: ray-head
 ---
+# Ray serve port
+apiVersion: v1
+kind: Service
+metadata:
+  name: serve
+spec:
+  ports:
+    - name: ray-serve
+      port: 8000
+  selector:
+    ray-node-status: up-to-date
+---
 # 'ray up' commmand manually create head and worker node,
 # while 'ray up' command needs read image name to use.
 # While skaffold adds postfix image version tag (e.g. ray-py-3-7-7:aser2oww) based on hash,

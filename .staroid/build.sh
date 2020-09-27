@@ -12,15 +12,20 @@ SHORT_VER=`echo $PYTHON_VERSION | sed "s/\([0-9]*\)[.]\([0-9]*\)[.][0-9]*/\1\2/g
 
 # true to build .whl from source (will take about 3 hours).
 # false to use pre-built whl file from http(s) url.
-BUILD_WHEEL=${BUILD_WHEEL:-true}
+BUILD_WHEEL=${BUILD_WHEEL:-false}
 
 if [ "$BUILD_WHEEL" == "true" ]; then
     if [ ! -d ".whl" ]; then # check if already built.
+        git config user.name "build"
+        git config user.email "ci@build.com"
+
+        # patch default ray serve bind address from 127.0.0.1 to 0.0.0.0
+        sed -i sed "s/DEFAULT_HTTP_HOST = \"127.0.0.1\"/DEFAULT_HTTP_HOST = \"0.0.0.0\"/g" python/ray/serve/constants.py
+        git commit python/ray/serve/constants.py -m "patch serve bind address"
+
         # Uncomment followings to build wheel for only single python version.
         #sed -ie "/^PYTHONS=/,+2d" python/build-wheel-manylinux1.sh
         #sed -ie "/^chmod/a PYTHONS=\(\"cp37-cp37m\"\)" python/build-wheel-manylinux1.sh
-        #git config user.name "build"
-        #git config user.email "ci@build.com"
         #git commit python/build-wheel-manylinux1.sh -m "update"
         #cat python/build-wheel-manylinux1.sh
 
