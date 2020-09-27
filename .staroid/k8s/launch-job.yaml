@@ -1,0 +1,58 @@
+# Job that launches ray cluster.
+# The job runs 'ray up' command when instance run via GUI launcher.
+# Therefore, instance created by 'ray up' command should skip this job.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: launch
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: true
+      containers:
+      - name: ray-py3-7-7
+        image: ray-py3-7-7
+        command: ["bash", "-c"]
+        args: |
+          [ "$LAUNCH" == "true" ] &&
+          git clone https://github.com/ray-project/ray.git &&
+          cp ~/ray/python/ray/autoscaler/staroid/example-full.yaml ~/anaconda3/lib/python3.7/site-packages/ray/autoscaler/staroid/ &&
+
+          cp /ray-cluster-config/staroid.yaml ~/staroid.yaml &&
+          sed -i "s/MAX_WORKERS/$MAX_WORKERS/g" ~/staroid.yaml &&
+          ray up /ray-cluster-config/staroid.yaml
+        env:
+        # do not change order of envs, while staroid.yaml launcher subtitude value based on index
+        - name: LAUNCH
+          value: "true"
+        - name: MAX_WORKERS
+          value: 5
+        volumeMounts:
+        - name: cluster-config-volume
+          mountPath: /ray-cluster-config
+      volumes:
+      - name: cluster-config-volume
+        configMap:
+          name: ray-cluster-config
+  backoffLimit: 1
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ray-cluster-config
+data:
+  staroid.yaml: |
+    cluster_name: staroid
+    max_workers: MAX_WORKERS
+    provider:
+      type: staroid
+      access_token:
+      account:
+      ske:
+      ske_region:
+      project: "GITHUB/open-datastudio/ray:master-staroid"
+      image_from_project: true
+      python_version: 3.7.7
+      use_internal_ips: true
+  

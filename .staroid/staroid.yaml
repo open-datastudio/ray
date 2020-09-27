@@ -11,7 +11,16 @@ build:
   skaffold:
     file: .staroid/skaffold.yaml
 deploy:
-  paramGroups: # launch parameters
+  paramGroups:
+  - name: Cluster configuration
+    collapsed: false
+    params:
+    - name: max_workers
+      description: maximum number of ray workers
+      type: NUMBER
+      defaultValue: 5
+      paths:
+      - Job:launch:spec.template.spec.containers[0].env[1].value
   - name: Misc
     collapsed: true
     params:
@@ -25,3 +34,8 @@ deploy:
         value: "true"
       - name: "False"
         value: "false"
+      paths:
+      - Job:launch:spec.template.spec.containers[0].env[0].value
+ingress:
+- serviceName: serve
+  port: 8000
