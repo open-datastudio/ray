@@ -24,7 +24,7 @@ spec:
     - name: ray-serve
       port: 8000
   selector:
-    ray-node-status: up-to-date
+    component: ray-head
 ---
 # 'ray up' commmand manually create head and worker node,
 # while 'ray up' command needs read image name to use.
