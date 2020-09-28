@@ -24,7 +24,8 @@ spec:
 
           cp /ray-cluster-config/staroid.yaml /tmp/staroid.yaml &&
           sed -i "s/MAX_WORKERS/$MAX_WORKERS/g" /tmp/staroid.yaml &&
-          ray up /tmp/staroid.yaml
+          ray up /tmp/staroid.yaml ||
+          echo "let ray cli create cluster"
         env:
         # do not change order of envs, while staroid.yaml launcher subtitude value based on index
         - name: LAUNCH
@@ -38,7 +39,7 @@ spec:
       - name: cluster-config-volume
         configMap:
           name: ray-cluster-config
-  backoffLimit: 1
+  backoffLimit: 0
 ---
 apiVersion: v1
 kind: ConfigMap
