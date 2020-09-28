@@ -20,7 +20,7 @@ if [ "$BUILD_WHEEL" == "true" ]; then
         git config user.email "ci@build.com"
 
         # patch default ray serve bind address from 127.0.0.1 to 0.0.0.0
-        sed -i sed "s/DEFAULT_HTTP_HOST = \"127.0.0.1\"/DEFAULT_HTTP_HOST = \"0.0.0.0\"/g" python/ray/serve/constants.py
+        sed -i "s/DEFAULT_HTTP_HOST = \"127.0.0.1\"/DEFAULT_HTTP_HOST = \"0.0.0.0\"/g" python/ray/serve/constants.py
         git commit python/ray/serve/constants.py -m "patch serve bind address"
 
         # Uncomment followings to build wheel for only single python version.
