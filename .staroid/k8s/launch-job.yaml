@@ -17,12 +17,14 @@ spec:
         args:
         - |
           [ "$LAUNCH" == "true" ] &&
+          cd /tmp &&
           git clone https://github.com/ray-project/ray.git &&
-          cp ~/ray/python/ray/autoscaler/staroid/example-full.yaml ~/anaconda3/lib/python3.7/site-packages/ray/autoscaler/staroid/ &&
+          cp /tmp/ray/python/ray/autoscaler/staroid/example-full.yaml /home/ray/anaconda3/lib/python3.7/site-packages/ray/autoscaler/staroid/ &&
+          rm -rf /tmp/ray &&
 
-          cp /ray-cluster-config/staroid.yaml ~/staroid.yaml &&
-          sed -i "s/MAX_WORKERS/$MAX_WORKERS/g" ~/staroid.yaml &&
-          ray up /ray-cluster-config/staroid.yaml
+          cp /ray-cluster-config/staroid.yaml /tmp/staroid.yaml &&
+          sed -i "s/MAX_WORKERS/$MAX_WORKERS/g" /tmp/staroid.yaml &&
+          ray up /tmp/staroid.yaml
         env:
         # do not change order of envs, while staroid.yaml launcher subtitude value based on index
         - name: LAUNCH
