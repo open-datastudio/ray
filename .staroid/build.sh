@@ -56,6 +56,9 @@ fi
 ./.staroid/ray_patch.sh reset . .
 ./.staroid/ray_patch.sh patch . $WHEEL
 
+# apply additional docker file commands
+cat ./.staroid/Dockerfile_staroid >> docker/ray-ml/Dockerfile
+
 # print patched files
 git diff
 

@@ -1,0 +1,4 @@
+# Additional dockerfile contents that will be appended to ray-ml/Dockerfile
+
+RUN sudo ln -s /usr/local/cuda /usr/local/nvidia && \
+    sudo ln -s /usr/local/cuda/lib64/libcudart.so.11.0 /usr/local/cuda/lib64/libcudart.so.10.1
