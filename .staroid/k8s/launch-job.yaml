@@ -18,11 +18,6 @@ spec:
         - |
           [ "$LAUNCH" == "true" ] &&
           pip install -q staroid kubernetes &&
-          cd /tmp &&
-          git clone https://github.com/ray-project/ray.git &&
-          cp /tmp/ray/python/ray/autoscaler/staroid/example-full.yaml /home/ray/anaconda3/lib/python3.7/site-packages/ray/autoscaler/staroid/ &&
-          rm -rf /tmp/ray &&
-
           cp /ray-cluster-config/staroid.yaml /tmp/staroid.yaml &&
           sed -i "s/MAX_WORKERS/$MAX_WORKERS/g" /tmp/staroid.yaml &&
           sed -i "s/WORKER_CPU/$WORKER_CPU/g" /tmp/staroid.yaml &&

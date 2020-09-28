@@ -12,7 +12,7 @@ SHORT_VER=`echo $PYTHON_VERSION | sed "s/\([0-9]*\)[.]\([0-9]*\)[.][0-9]*/\1\2/g
 
 # true to build .whl from source (will take about 3 hours).
 # false to use pre-built whl file from http(s) url.
-BUILD_WHEEL=${BUILD_WHEEL:-false}
+BUILD_WHEEL=${BUILD_WHEEL:-true}
 
 if [ "$BUILD_WHEEL" == "true" ]; then
     if [ ! -d ".whl" ]; then # check if already built.
