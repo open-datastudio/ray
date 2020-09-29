@@ -77,7 +77,7 @@ data:
         generateName: ray-head-
         labels:
           component: ray-head
-          pod.staroid.com/spot: false # use on-demand instance for head.
+          pod.staroid.com/spot: "false" # use on-demand instance for head.
       spec:
         automountServiceAccountToken: true
         restartPolicy: Never
