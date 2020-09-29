@@ -22,6 +22,9 @@ spec:
           sed -i "s/MAX_WORKERS/$MAX_WORKERS/g" /tmp/staroid.yaml &&
           sed -i "s/WORKER_CPU/$WORKER_CPU/g" /tmp/staroid.yaml &&
           sed -i "s/WORKER_MEM/$WORKER_MEM/g" /tmp/staroid.yaml &&
+          sed -i "s/WORKER_SPOT/$WORKER_SPOT/g" /tmp/staroid.yaml &&
+          sed -i "s/WORKER_ISOLATION/$WORKER_ISOLATION/g" /tmp/staroid.yaml &&
+          sed -i "s/WORKER_INSTANCE_TYPE/$WORKER_INSTANCE_TYPE/g" /tmp/staroid.yaml &&
           ray up -y /tmp/staroid.yaml ||
           echo "let ray cli create cluster"
         env:
@@ -34,6 +37,12 @@ spec:
           value: 2
         - name: WORKER_MEM
           value: 4Gi
+        - name: WORKER_ISOLATION
+          value: sandboxed
+        - name: WORKER_SPOT
+          value: "true"
+        - name: WORKER_INSTANCE_TYPE
+          value: "standard-4"
         volumeMounts:
         - name: cluster-config-volume
           mountPath: /ray-cluster-config
@@ -68,7 +77,7 @@ data:
         generateName: ray-head-
         labels:
           component: ray-head
-          pod.staroid.com/spot: "false" # use on-demand instance for head.
+          pod.staroid.com/spot: false # use on-demand instance for head.
       spec:
         automountServiceAccountToken: true
         restartPolicy: Never
@@ -100,10 +109,11 @@ data:
               name: nfs-volume
           resources:
             requests:
-              cpu: 2000m
-              memory: 4Gi
+              cpu: 4000m
+              memory: 8Gi
             limits:
-              memory: 4Gi
+              cpu: 4000m
+              memory: 8Gi
           env:
             - name: MY_CPU_REQUEST
               valueFrom:
@@ -118,7 +128,9 @@ data:
         generateName: ray-worker-
         labels:
           component: ray-worker
-          pod.staroid.com/spot: "true" # use spot instance for workers.
+          pod.staroid.com/spot: WORKER_SPOT
+          pod.staroid.com/isolation: WORKER_ISOLATION
+          pod.staroid.com/instance-type: WORKER_INSTANCE_TYPE
         spec:
           serviceAccountName: default
           restartPolicy: Never
@@ -149,6 +161,7 @@ data:
                 cpu: WORKER_CPU
                 memory: WORKER_MEM
               limits:
+                cpu: WORKER_CPU
                 memory: WORKER_MEM
             env:
             - name: MY_CPU_REQUEST
