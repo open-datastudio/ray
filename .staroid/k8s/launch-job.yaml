@@ -128,7 +128,7 @@ data:
         generateName: ray-worker-
         labels:
           component: ray-worker
-          pod.staroid.com/spot: WORKER_SPOT
+          pod.staroid.com/spot: "WORKER_SPOT"
           pod.staroid.com/isolation: WORKER_ISOLATION
           pod.staroid.com/instance-type: WORKER_INSTANCE_TYPE
         spec:
