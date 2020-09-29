@@ -28,3 +28,6 @@ RUN sudo ln -s /usr/local/cuda /usr/local/nvidia && \
     sudo ln -s /usr/lib/x86_64-linux-gnu/libcudnn_cnn_train.so.8 /usr/local/cuda/lib64/libcudnn_cnn_train.so.7 && \
     sudo ln -s /usr/lib/x86_64-linux-gnu/libcudnn_ops_infer.so.8 /usr/local/cuda/lib64/libcudnn_ops_infer.so.7 && \
     sudo ln -s /usr/lib/x86_64-linux-gnu/libcudnn_ops_train.so.8 /usr/local/cuda/lib64/libcudnn_ops_train.so.7
+
+# install tensorflow from conda instead of pip for cuda driver support
+RUN conda install -y tensorflow-gpu

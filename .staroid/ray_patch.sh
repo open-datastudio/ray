@@ -84,12 +84,32 @@ EOF
     $SED_INPLACE "s/\(\&\& sudo rm.*\)/\1 \&\& sudo apt-get autoremove -y cmake g++ \&\& sudo rm -rf \/var\/lib\/apt\/lists\/\* \&\& sudo apt-get clean/g" ${RAY_HOME}/docker/ray-deps/Dockerfile
     $SED_INPLACE "s/\(\&\& sudo rm.*\)/    \1 \&\& sudo apt-get autoremove -y cmake g++ \&\& sudo rm -rf \/var\/lib\/apt\/lists\/\* \&\& sudo apt-get clean/g" ${RAY_HOME}/docker/ray/Dockerfile
 
+    # remove tensorflow from pip.
+    # tensorflow need to be installed using conda, because
+    # tensorflow is currently built for cuda 10.1
+    # and base nvidia-docker image has cuda 11.0 installed.
+    #
+    # Although Dockerfile_staroid sym link cuda 10.1 from cuda 11.0 files (cuda 11 supposed to backward compatible),
+    # tensorflow detect GPU correctly but crashing actual code in this way.
+    #
+    # conda install cuda 10.1 binaries together with tensorflow and it works well.
+    # Therefore Dockerfile_staroid will install tensorflow using conda.
+    $SED_INPLACE "/tensorflow/d" ${RAY_HOME}/python/requirements.txt
+    $SED_INPLACE "/tensorflow/d" ${RAY_HOME}/python/requirements_ml_docker.txt
+    $SED_INPLACE "/tensorflow/d" ${RAY_HOME}/python/requirements_rllib.txt
+    $SED_INPLACE "/tensorflow/d" ${RAY_HOME}/python/requirements_tune.txt
+
 elif [ "$OP" == "reset" ]; then
     git checkout ${RAY_HOME}/docker/ray/Dockerfile
     git checkout ${RAY_HOME}/docker/ray-deps/Dockerfile
     git checkout ${RAY_HOME}/docker/base-deps/Dockerfile
     git checkout ${RAY_HOME}/docker/ray-ml/Dockerfile
     git checkout ${RAY_HOME}/build-docker.sh
+
+    git checkout ${RAY_HOME}/python/requirements.txt
+    git checkout ${RAY_HOME}/python/requirements_ml_docker.txt
+    git checkout ${RAY_HOME}/python/requirements_rllib.txt
+    git checkout ${RAY_HOME}/python/requirements_tune.txt
 else
     echo "Invalid operation $OP"
     exit 1
