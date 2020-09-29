@@ -57,7 +57,7 @@ fi
 ./.staroid/ray_patch.sh patch . $WHEEL
 
 # apply additional docker file commands
-cat ./.staroid/Dockerfile_staroid >> docker/ray-ml/Dockerfile
+# cat ./.staroid/Dockerfile_staroid >> docker/ray-ml/Dockerfile
 
 # print patched files
 git diff
@@ -71,10 +71,10 @@ cat docker/ray-ml/Dockerfile
 cp python/requirements* docker/ray-ml
 
 # build docker image
-./build-docker.sh --no-cache-build --gpu --python-version $PYTHON_VERSION
+./build-docker.sh --no-cache-build --python-version $PYTHON_VERSION
 
 # print images
-docker tag rayproject/ray-ml:latest-gpu $IMAGE
+docker tag rayproject/ray-ml:latest $IMAGE
 docker images
 
 # verify image hash are all different.
