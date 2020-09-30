@@ -23,6 +23,10 @@ if [ "$BUILD_WHEEL" == "true" ]; then
         sed -i "s/DEFAULT_HTTP_HOST = \"127.0.0.1\"/DEFAULT_HTTP_HOST = \"0.0.0.0\"/g" python/ray/serve/constants.py
         git commit python/ray/serve/constants.py -m "patch serve bind address"
 
+        # increase timeout for 'ray up' command
+        sed -i "s/NODE_START_WAIT_S = 300/NODE_START_WAIT_S = 1200/g" python/ray/autoscaler/_private/command_runner.py
+        git commit python/ray/autoscaler/_private/command_runner.py -m "increase ray up timeout"
+
         # Uncomment followings to build wheel for only single python version.
         #sed -ie "/^PYTHONS=/,+2d" python/build-wheel-manylinux1.sh
         #sed -ie "/^chmod/a PYTHONS=\(\"cp37-cp37m\"\)" python/build-wheel-manylinux1.sh
