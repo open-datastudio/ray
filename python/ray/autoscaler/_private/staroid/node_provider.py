@@ -161,7 +161,6 @@ class StaroidNodeProvider(NodeProvider):
 
     def non_terminated_nodes(self, tag_filters):
         instance_name = self.cluster_name
-
         kube_client = self._connect_kubeapi(instance_name)
         if kube_client is None:
             return []
@@ -229,7 +228,8 @@ class StaroidNodeProvider(NodeProvider):
         max_retry = 10
         for i in range(max_retry):
             try:
-                pod = core_api.read_namespaced_pod_status(node_id, self.namespace)
+                pod = core_api.read_namespaced_pod_status(
+                    node_id, self.namespace)
                 pod.metadata.labels.update(tags)
                 core_api.patch_namespaced_pod(node_id, self.namespace, pod)
             except ApiException as e:
@@ -239,7 +239,6 @@ class StaroidNodeProvider(NodeProvider):
                     continue
 
                 raise e
-
 
     def create_node(self, node_config, tags, count):
         instance_name = self.cluster_name
@@ -305,6 +304,14 @@ class StaroidNodeProvider(NodeProvider):
             pod_spec["metadata"]["labels"].update(tags)
         else:
             pod_spec["metadata"]["labels"] = tags
+
+        if "generateName" not in pod_spec["metadata"]:
+            pod_spec["metadata"]["generateName"] = \
+                "ray-" + pod_spec["metadata"]["labels"]["ray-node-type"]
+
+        if "component" not in pod_spec["metadata"]["labels"]:
+            pod_spec["metadata"]["labels"]["component"] = \
+                "ray-" + pod_spec["metadata"]["labels"]["ray-node-type"]
 
         if image is not None:
             containers = pod_spec["spec"]["containers"]
